@@ -16,9 +16,17 @@ scrape_configs:
       - targets: ["prometheus:9090"]
 
   - job_name: node
+    metrics_path: /metrics/node
     file_sd_configs:
       - files:
-          - /etc/prometheus/targets/*.json
+          - /etc/prometheus/targets/node_vps.json
+        refresh_interval: 30s
+
+  - job_name: systemd
+    metrics_path: /metrics/systemd
+    file_sd_configs:
+      - files:
+          - /etc/prometheus/targets/systemd_vps.json
         refresh_interval: 30s
 
   - job_name: blackbox-http
