@@ -9,3 +9,6 @@ prometheus-data/
 loki-data/
 grafana-data/
 alertmanager-data/
+
+# Client data
+node_vps.json
