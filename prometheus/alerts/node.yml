@@ -1,0 +1,47 @@
+groups:
+  - name: node-alerts
+    rules:
+      - alert: InstanceDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instance down: {{ $labels.instance }}"
+          description: "Target {{ $labels.job }} on {{ $labels.instance }} is down."
+
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100) > 90
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU on {{ $labels.instance }}"
+          description: "CPU usage > 90% for 10m."
+
+      - alert: LowDiskSpace
+        expr: (node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\"} / node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\"}) * 100 < 15
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Filesystem has <15% free space."
+
+      - alert: LowMemory
+        expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 < 10
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low memory on {{ $labels.instance }}"
+          description: "Available memory <10% for 10m."
+
+      - alert: SSLCertExpirySoon
+        expr: (probe_ssl_earliest_cert_expiry - time()) / 86400 < 14
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "SSL expires soon for {{ $labels.instance }}"
+          description: "Certificate will expire in <14 days."

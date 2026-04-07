@@ -1,0 +1,11 @@
+.env
+.env.*
+*.log
+tmp/
+.DS_Store
+
+# Runtime data
+prometheus-data/
+loki-data/
+grafana-data/
+alertmanager-data/
