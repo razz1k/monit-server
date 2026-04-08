@@ -947,7 +947,7 @@
       "valueName": "current"
     }
   ],
-  "refresh": "30s",
+  "refresh": "5m",
   "schemaVersion": 16,
   "style": "dark",
   "tags": [
@@ -1058,7 +1058,7 @@
         "options": [],
         "query": "label_values(probe_success, instance)",
         "refresh": 1,
-        "regex": "",
+        "regex": "^(?!.*@).*$",
         "sort": 0,
         "tagValuesQuery": "",
         "tags": [],
