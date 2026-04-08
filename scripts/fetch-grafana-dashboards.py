@@ -89,6 +89,8 @@ def fix_log_dashboard_avg_throughput_panel(d):
                 tgt["expr"] = (
                     'sum(rate({job="varlogs", filename=~"$filename"}[5m])) or vector(0)'
                 )
+                tgt["editorMode"] = "code"
+                tgt["queryType"] = "range"
         panel["options"] = {
             "colorMode": "value",
             "graphMode": "none",

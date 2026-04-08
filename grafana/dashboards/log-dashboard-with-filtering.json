@@ -46,7 +46,9 @@
             "type": "loki",
             "uid": "loki"
           },
+          "editorMode": "code",
           "expr": "sum(rate({job=\"varlogs\", filename=~\"$filename\"}[5m])) or vector(0)",
+          "queryType": "range",
           "refId": "A"
         }
       ]
