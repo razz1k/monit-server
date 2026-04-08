@@ -17,6 +17,7 @@ This directory contains the central monitoring stack.
 - `prometheus/prometheus.yml` - scrape and alerting config
 - `prometheus/targets/node_vps.json` - file_sd targets for `node_exporter` on VPS hosts
 - `prometheus/targets/systemd_vps.json` - file_sd targets for `systemd_exporter` on VPS hosts
+- `prometheus/targets/blackbox_http.json` / `blackbox_icmp.json` - file_sd targets for blackbox HTTP/ICMP (copy from `*.json.example`; gitignored)
 - `prometheus/alerts/node.yml` - base host alert rules
 - `prometheus/alerts/systemd.yml` - systemd unit alert rules
 - `alertmanager/alertmanager.yml.template` - Alertmanager config template (`TELEGRAM_*` from `.env`)
@@ -35,6 +36,7 @@ This directory contains the central monitoring stack.
    - `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` for Alertmanager (rendered from `alertmanager.yml.template` at container start)
    - copy `prometheus/targets/node_vps.json.example` to `prometheus/targets/node_vps.json` and set scrape targets to `host:9443` (nginx on each VPS)
    - copy `prometheus/targets/systemd_vps.json.example` to `prometheus/targets/systemd_vps.json` with the **same** `host:9443` list as in `node_vps.json` (paths differ via `metrics_path` in `prometheus.yml`)
+   - copy `prometheus/targets/blackbox_http.json.example` → `prometheus/targets/blackbox_http.json` and `blackbox_icmp.json.example` → `blackbox_icmp.json`, then set probe URLs / IPs (or use `[]` as the top-level JSON array to define no targets until you are ready)
 2. Start stack:
 
 ```bash
@@ -51,6 +53,7 @@ docker compose up -d
 
 - The `node` scrape job reads only `prometheus/targets/node_vps.json` (mapped to `/etc/prometheus/targets/node_vps.json` in the container).
 - The `systemd` scrape job reads only `prometheus/targets/systemd_vps.json`.
+- Blackbox jobs read `prometheus/targets/blackbox_http.json` and `blackbox_icmp.json` (full URLs or `host:port` for HTTP; hostnames or IPs for ICMP). Same `relabel_configs` pattern as before: Prometheus scrapes `blackbox-exporter`, probe targets come from file_sd.
 - Keep the same host list in both files, using port `9443` on each VPS. The `node` job scrapes `/metrics/node`, the `systemd` job scrapes `/metrics/systemd` (see `prometheus/prometheus.yml`).
 - Client **`LOG_HOST`** in `.env` (see `client` stack) is only for **Loki / Promtail** labels; Prometheus does not read it. Telegram `InstanceDown` uses **`instance` without trailing `:port`** for the `host:` line and full `endpoint:` with port. You may add an optional **`hostname`** label in these JSON files if you want a custom name in alerts (same key/value for `node` and `systemd` targets of the same machine).
 - Example JSON structure:

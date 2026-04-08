@@ -1,0 +1,11 @@
+[
+  {
+    "targets": [
+      "https://example.com",
+      "https://api.example.com/health"
+    ],
+    "labels": {
+      "env": "prod"
+    }
+  }
+]

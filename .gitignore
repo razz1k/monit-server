@@ -14,3 +14,5 @@ alertmanager-data/
 # Client data
 node_vps.json
 systemd_vps.json
+blackbox_http.json
+blackbox_icmp.json

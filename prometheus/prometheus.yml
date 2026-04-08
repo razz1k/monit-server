@@ -33,10 +33,10 @@ scrape_configs:
     metrics_path: /probe
     params:
       module: [http_2xx]
-    static_configs:
-      - targets:
-          - https://example.com
-          - https://api.example.com/health
+    file_sd_configs:
+      - files:
+          - /etc/prometheus/targets/blackbox_http.json
+        refresh_interval: 30s
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
@@ -49,10 +49,10 @@ scrape_configs:
     metrics_path: /probe
     params:
       module: [icmp]
-    static_configs:
-      - targets:
-          - 10.10.10.11
-          - 10.10.10.12
+    file_sd_configs:
+      - files:
+          - /etc/prometheus/targets/blackbox_icmp.json
+        refresh_interval: 30s
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
