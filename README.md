@@ -54,6 +54,7 @@ docker compose up -d
 - The `node` scrape job reads only `prometheus/targets/node_vps.json` (mapped to `/etc/prometheus/targets/node_vps.json` in the container).
 - The `systemd` scrape job reads only `prometheus/targets/systemd_vps.json`.
 - Blackbox jobs read `prometheus/targets/blackbox_http.json` and `blackbox_icmp.json` (full URLs or `host:port` for HTTP; hostnames or IPs for ICMP). Same `relabel_configs` pattern as before: Prometheus scrapes `blackbox-exporter`, probe targets come from file_sd.
+- If the probed HTTP endpoint requires **basic auth**, you can embed credentials directly in the target URL: `https://USERNAME:PASSWORD@example.com/health`. Keep real credentials only in `blackbox_http.json` (gitignored), not in the `*.example` file.
 - Keep the same host list in both files, using port `9443` on each VPS. The `node` job scrapes `/metrics/node`, the `systemd` job scrapes `/metrics/systemd` (see `prometheus/prometheus.yml`).
 - Client **`LOG_HOST`** in `.env` (see `client` stack) is only for **Loki / Promtail** labels; Prometheus does not read it. Telegram `InstanceDown` uses **`instance` without trailing `:port`** for the `host:` line and full `endpoint:` with port. You may add an optional **`hostname`** label in these JSON files if you want a custom name in alerts (same key/value for `node` and `systemd` targets of the same machine).
 - Example JSON structure:
