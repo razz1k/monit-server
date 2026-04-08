@@ -73,7 +73,7 @@ Provisioned on startup (folder **Monitoring**):
 | `systemd-exporter.json` | [22872](https://grafana.com/grafana/dashboards/22872-systemd-exporter/) | systemd_exporter metrics |
 | `blackbox-exporter.json` | [7587](https://grafana.com/grafana/dashboards/7587) | Blackbox probe metrics |
 | `prometheus-overview.json` | [3662](https://grafana.com/grafana/dashboards/3662) | Prometheus server health |
-| `loki-logs-overview.json` | [15141](https://grafana.com/grafana/dashboards/15141) | Loki log panels |
+| `log-dashboard-with-filtering.json` | [24978](https://grafana.com/grafana/dashboards/24978-log-dashboard-with-filtering/) | Loki + Promtail Linux logs (`job=varlogs`) |
 
 JSON was post-processed to point datasources at provisioned UIDs `prometheus` and `loki`. To refresh from grafana.com after changing datasource UIDs, run `python3 scripts/fetch-grafana-dashboards.py` from the `server` directory.
 

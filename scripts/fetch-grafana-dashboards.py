@@ -14,7 +14,7 @@ DASHBOARDS = [
     (22872, "systemd-exporter.json", True),
     (7587, "blackbox-exporter.json", True),
     (3662, "prometheus-overview.json", True),
-    (15141, "loki-logs-overview.json", False),
+    (24978, "log-dashboard-with-filtering.json", False),
 ]
 
 
@@ -63,6 +63,19 @@ def fix_templating_prometheus(d):
             ds["uid"] = PROM_UID
 
 
+def fix_templating_loki(d):
+    t = d.get("templating")
+    if not t or "list" not in t:
+        return
+    for x in t["list"]:
+        if x.get("type") == "datasource" and x.get("query") == "loki":
+            x["current"] = {
+                "selected": True,
+                "text": "Loki",
+                "value": LOKI_UID,
+            }
+
+
 def fetch_and_prepare(dash_id: int, prom_only: bool) -> dict:
     url = f"https://grafana.com/api/dashboards/{dash_id}/revisions/latest/download"
     with urllib.request.urlopen(url, timeout=60) as resp:
@@ -76,6 +89,8 @@ def fetch_and_prepare(dash_id: int, prom_only: bool) -> dict:
     fix_ds(d, prom_only)
     if prom_only:
         fix_templating_prometheus(d)
+    else:
+        fix_templating_loki(d)
     return d
 
 
