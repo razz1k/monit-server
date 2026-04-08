@@ -77,6 +77,67 @@ def fix_templating_loki(d):
         # Dashboard 24978: "All" for filename must expand to a regex that matches every path.
         if x.get("name") == "filename" and x.get("type") == "query" and x.get("includeAll"):
             x["allValue"] = ".+"
+        if x.get("name") == "host" and x.get("type") == "query" and x.get("includeAll"):
+            x["allValue"] = ".+"
+
+
+LOG_DASHBOARD_HOST_VAR = {
+    "name": "host",
+    "type": "query",
+    "datasource": {"type": "loki", "uid": LOKI_UID},
+    "definition": 'label_values({job="varlogs"}, host)',
+    "query": 'label_values({job="varlogs"}, host)',
+    "multi": True,
+    "includeAll": True,
+    "allValue": ".+",
+    "label": "Host",
+    "refresh": 1,
+}
+
+
+def apply_log_dashboard_host_filter(d):
+    """Promtail sets label host (LOG_HOST); community dashboard 24978 had no host variable."""
+    t = d.get("templating") or {}
+    lst = t.setdefault("list", [])
+    if not any(x.get("name") == "host" for x in lst):
+        ins = 0
+        for i, x in enumerate(lst):
+            if x.get("name") == "DS_LOKI":
+                ins = i + 1
+                break
+        lst.insert(ins, LOG_DASHBOARD_HOST_VAR)
+    for x in lst:
+        if x.get("name") == "filename":
+            x["definition"] = 'label_values({job="varlogs", host=~"$host"}, filename)'
+            x["query"] = 'label_values({job="varlogs", host=~"$host"}, filename)'
+            x["includeAll"] = True
+            x["allValue"] = ".+"
+    for panel in d.get("panels", []):
+        for tgt in panel.get("targets") or []:
+            ex = tgt.get("expr")
+            if (
+                isinstance(ex, str)
+                and 'job="varlogs"' in ex
+                and 'host=~"$host"' not in ex
+            ):
+                tgt["expr"] = ex.replace(
+                    '{job="varlogs", ',
+                    '{job="varlogs", host=~"$host", ',
+                    1,
+                )
+        fc = panel.get("fieldConfig") or {}
+        defaults = fc.get("defaults") or {}
+        for link in defaults.get("links") or []:
+            url = link.get("url")
+            if (
+                isinstance(url, str)
+                and "var-filename=" in url
+                and "var-host=" not in url
+            ):
+                link["url"] = url.replace(
+                    "?${__url_time_range}&var-filename=",
+                    "?${__url_time_range}&var-host=$host&var-filename=",
+                )
 
 
 def fix_log_dashboard_avg_throughput_panel(d):
@@ -87,7 +148,8 @@ def fix_log_dashboard_avg_throughput_panel(d):
         for tgt in panel.get("targets") or []:
             if tgt.get("refId") == "A":
                 tgt["expr"] = (
-                    'sum(rate({job="varlogs", filename=~"$filename"}[5m])) or vector(0)'
+                    'sum(rate({job="varlogs", host=~"$host", filename=~"$filename"}[5m])) '
+                    "or vector(0)"
                 )
                 tgt["editorMode"] = "code"
                 tgt["queryType"] = "instant"
@@ -149,6 +211,7 @@ def fetch_and_prepare(dash_id: int, prom_only: bool) -> dict:
         fix_templating_loki(d)
         ensure_loki_panels_have_datasource(d)
         if dash_id == 24978:
+            apply_log_dashboard_host_filter(d)
             fix_log_dashboard_avg_throughput_panel(d)
             d["refresh"] = "30s"
     return d

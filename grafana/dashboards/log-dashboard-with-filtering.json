@@ -57,7 +57,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "sum(rate({job=\"varlogs\", filename=~\"$filename\"}[5m])) or vector(0)",
+          "expr": "sum(rate({job=\"varlogs\", host=~\"$host\", filename=~\"$filename\"}[5m])) or vector(0)",
           "queryType": "instant",
           "refId": "A"
         }
@@ -83,7 +83,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({job=\"varlogs\", filename=~\"$filename\"}[$__range])) or vector(0)",
+          "expr": "sum(count_over_time({job=\"varlogs\", host=~\"$host\", filename=~\"$filename\"}[$__range])) or vector(0)",
           "refId": "A"
         }
       ]
@@ -116,7 +116,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({job=\"varlogs\", filename=~\"$filename\"} |= \"info\" [$__range])) or vector(0)",
+          "expr": "sum(count_over_time({job=\"varlogs\", host=~\"$host\", filename=~\"$filename\"} |= \"info\" [$__range])) or vector(0)",
           "refId": "A"
         }
       ]
@@ -149,7 +149,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({job=\"varlogs\", filename=~\"$filename\"} |~ \"(?i)warn\" [$__range])) or vector(0)",
+          "expr": "sum(count_over_time({job=\"varlogs\", host=~\"$host\", filename=~\"$filename\"} |~ \"(?i)warn\" [$__range])) or vector(0)",
           "refId": "A"
         }
       ]
@@ -182,7 +182,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({job=\"varlogs\", filename=~\"$filename\"} |~ \"(?i)error|crit|fail\" [$__range])) or vector(0)",
+          "expr": "sum(count_over_time({job=\"varlogs\", host=~\"$host\", filename=~\"$filename\"} |~ \"(?i)error|crit|fail\" [$__range])) or vector(0)",
           "refId": "A"
         }
       ]
@@ -211,7 +211,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"varlogs\", filename=~\"$filename\"} |= \"info\"",
+          "expr": "{job=\"varlogs\", host=~\"$host\", filename=~\"$filename\"} |= \"info\"",
           "maxLines": 5,
           "refId": "A"
         }
@@ -241,7 +241,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"varlogs\", filename=~\"$filename\"} |~ \"(?i)warn\"",
+          "expr": "{job=\"varlogs\", host=~\"$host\", filename=~\"$filename\"} |~ \"(?i)warn\"",
           "maxLines": 5,
           "refId": "A"
         }
@@ -271,7 +271,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"varlogs\", filename=~\"$filename\"} |~ \"(?i)error|crit|fail\"",
+          "expr": "{job=\"varlogs\", host=~\"$host\", filename=~\"$filename\"} |~ \"(?i)error|crit|fail\"",
           "maxLines": 5,
           "refId": "A"
         }
@@ -300,7 +300,7 @@
           "links": [
             {
               "title": "Filter Dashboard to ${__series.name}",
-              "url": "${__dashboard.url}?${__url_time_range}&var-filename=${__series.name}",
+              "url": "${__dashboard.url}?${__url_time_range}&var-host=$host&var-filename=${__series.name}",
               "targetBlank": false
             }
           ]
@@ -312,7 +312,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (filename) (count_over_time({job=\"varlogs\", filename=~\"$filename\"}[$__interval]))",
+          "expr": "sum by (filename) (count_over_time({job=\"varlogs\", host=~\"$host\", filename=~\"$filename\"}[$__interval]))",
           "legendFormat": "{{filename}}",
           "refId": "A"
         }
@@ -344,7 +344,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{job=\"varlogs\", filename=~\"$filename\"}",
+          "expr": "{job=\"varlogs\", host=~\"$host\", filename=~\"$filename\"}",
           "refId": "A"
         }
       ]
@@ -371,14 +371,29 @@
         }
       },
       {
+        "name": "host",
+        "type": "query",
+        "datasource": {
+          "type": "loki",
+          "uid": "loki"
+        },
+        "definition": "label_values({job=\"varlogs\"}, host)",
+        "query": "label_values({job=\"varlogs\"}, host)",
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".+",
+        "label": "Host",
+        "refresh": 1
+      },
+      {
         "name": "filename",
         "type": "query",
         "datasource": {
           "type": "loki",
           "uid": "loki"
         },
-        "definition": "label_values({job=\"varlogs\"}, filename)",
-        "query": "label_values({job=\"varlogs\"}, filename)",
+        "definition": "label_values({job=\"varlogs\", host=~\"$host\"}, filename)",
+        "query": "label_values({job=\"varlogs\", host=~\"$host\"}, filename)",
         "multi": true,
         "includeAll": true,
         "allValue": ".+",
