@@ -34,7 +34,7 @@ This directory contains the central monitoring stack.
    - `GF_SECURITY_ADMIN_USER`, `GF_SECURITY_ADMIN_PASSWORD` for Grafana
    - `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` for Alertmanager (rendered from `alertmanager.yml.template` at container start)
    - copy `prometheus/targets/node_vps.json.example` to `prometheus/targets/node_vps.json` and set scrape targets to `host:9443` (nginx on each VPS)
-   - copy `prometheus/targets/systemd_vps.json.example` to `prometheus/targets/systemd_vps.json` with the **same** `host:9443` list (paths differ via `metrics_path` in `prometheus.yml`)
+   - copy `prometheus/targets/systemd_vps.json.example` to `prometheus/targets/systemd_vps.json` with the **same** hosts and the **same** `hostname` label per host as in `node_vps.json` (paths differ via `metrics_path` in `prometheus.yml`)
 2. Start stack:
 
 ```bash
@@ -52,16 +52,22 @@ docker compose up -d
 - The `node` scrape job reads only `prometheus/targets/node_vps.json` (mapped to `/etc/prometheus/targets/node_vps.json` in the container).
 - The `systemd` scrape job reads only `prometheus/targets/systemd_vps.json`.
 - Keep the same host list in both files, using port `9443` on each VPS. The `node` job scrapes `/metrics/node`, the `systemd` job scrapes `/metrics/systemd` (see `prometheus/prometheus.yml`).
-- Example JSON structure:
+- Optional label **`hostname`** (same value for the same machine in **both** JSON files) is used in Telegram for `InstanceDown`: readable host line and `Targets [node, systemd, …]` in one message. If omitted, the template strips the trailing `:port` from `instance` for the `host:` line and still shows full `endpoint:`.
+- Example JSON structure (one object per host):
 
 ```json
 [
   {
-    "labels": { "job": "node", "env": "prod" },
-    "targets": ["10.10.10.11:9443"]
+    "targets": ["10.10.10.11:9443"],
+    "labels": { "env": "prod", "hostname": "vps-web-01" }
   }
 ]
 ```
+
+## Telegram / Alertmanager
+
+- Groups use `group_by: [alertname, instance]`. For **`InstanceDown`**, all scrape jobs that share the same `instance` (e.g. `node` and `systemd` on `:9443`) are merged into **one** Telegram message listing jobs in `Targets […]`.
+- **`SystemdExporterDown`** was removed; unreachable `systemd` scrapes are covered by `InstanceDown` together with `node`.
 
 ## Bundled Grafana dashboards
 

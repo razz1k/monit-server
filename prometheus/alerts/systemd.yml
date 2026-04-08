@@ -1,15 +1,6 @@
 groups:
   - name: systemd-alerts
     rules:
-      - alert: SystemdExporterDown
-        expr: up{job="systemd"} == 0
-        for: 2m
-        labels:
-          severity: critical
-        annotations:
-          summary: "systemd_exporter down on {{ $labels.instance }}"
-          description: "Prometheus cannot scrape systemd_exporter on {{ $labels.instance }}."
-
       - alert: SystemdServiceFailed
         expr: systemd_unit_state{state="failed", type="service"} == 1
         for: 1m

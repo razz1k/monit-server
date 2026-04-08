@@ -16,10 +16,20 @@ receivers:
         parse_mode: HTML
         message: |
           <b>{{ .Status | toUpper }}</b>
-          {{ range .Alerts -}}
+          {{- if eq .CommonLabels.alertname "InstanceDown" }}
+          <b>{{ .CommonLabels.alertname }}</b>
+          host: {{ if .CommonLabels.hostname }}{{ .CommonLabels.hostname }}{{ else }}{{ reReplaceAll ":[0-9]+$" "" .CommonLabels.instance }}{{ end }}
+          endpoint: {{ .CommonLabels.instance }}
+          severity: {{ .CommonLabels.severity }}
+          Instance down: {{ if .CommonLabels.hostname }}{{ .CommonLabels.hostname }}{{ else }}{{ reReplaceAll ":[0-9]+$" "" .CommonLabels.instance }}{{ end }}
+          Targets [{{ range $i, $a := .Alerts }}{{ if $i }}, {{ end }}{{ $a.Labels.job }}{{ end }}] on {{ if .CommonLabels.hostname }}{{ .CommonLabels.hostname }}{{ else }}{{ reReplaceAll ":[0-9]+$" "" .CommonLabels.instance }}{{ end }} is down.
+          {{- else }}
+          {{- range .Alerts }}
           <b>{{ .Labels.alertname }}</b>
-          instance: {{ .Labels.instance }}
+          host: {{ if .Labels.hostname }}{{ .Labels.hostname }}{{ else }}{{ reReplaceAll ":[0-9]+$" "" .Labels.instance }}{{ end }}
+          endpoint: {{ .Labels.instance }}
           severity: {{ .Labels.severity }}
           {{ .Annotations.summary }}
           {{ .Annotations.description }}
           {{ end }}
+          {{- end }}

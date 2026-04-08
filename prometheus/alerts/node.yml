@@ -8,7 +8,7 @@ groups:
           severity: critical
         annotations:
           summary: "Instance down: {{ $labels.instance }}"
-          description: "Target {{ $labels.job }} on {{ $labels.instance }} is down."
+          description: "Scrape job {{ $labels.job }} is down for {{ $labels.instance }}."
 
       - alert: HighCPUUsage
         expr: '100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90'
