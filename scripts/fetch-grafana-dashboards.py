@@ -79,6 +79,19 @@ def fix_templating_loki(d):
             x["allValue"] = ".+"
 
 
+def ensure_loki_panels_have_datasource(d):
+    """Grafana uses the org default datasource when panel.datasource is missing; set Loki on each panel."""
+    for panel in d.get("panels", []):
+        if panel.get("type") == "row":
+            continue
+        targets = panel.get("targets") or []
+        if not targets:
+            continue
+        ds0 = targets[0].get("datasource") or {}
+        if ds0.get("type") == "loki" or ds0.get("uid") == LOKI_UID:
+            panel["datasource"] = {"type": "loki", "uid": LOKI_UID}
+
+
 def fetch_and_prepare(dash_id: int, prom_only: bool) -> dict:
     url = f"https://grafana.com/api/dashboards/{dash_id}/revisions/latest/download"
     with urllib.request.urlopen(url, timeout=60) as resp:
@@ -94,6 +107,7 @@ def fetch_and_prepare(dash_id: int, prom_only: bool) -> dict:
         fix_templating_prometheus(d)
     else:
         fix_templating_loki(d)
+        ensure_loki_panels_have_datasource(d)
     return d
 
 

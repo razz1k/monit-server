@@ -38,10 +38,10 @@ groups:
           description: "Available memory <10% for 10m."
 
       - alert: SSLCertExpirySoon
-        expr: (probe_ssl_earliest_cert_expiry - time()) / 86400 < 14
+        expr: (probe_ssl_earliest_cert_expiry - time()) / 86400 < 2
         for: 30m
         labels:
           severity: warning
         annotations:
           summary: "SSL expires soon for {{ $labels.instance }}"
-          description: "Certificate will expire in <14 days."
+          description: "Certificate will expire in less than 2 days."

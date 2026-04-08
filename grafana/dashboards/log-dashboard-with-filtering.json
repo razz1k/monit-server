@@ -10,6 +10,10 @@
       "title": "Avg Throughput",
       "type": "stat",
       "id": 1,
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "gridPos": {
         "h": 4,
         "w": 4,
@@ -39,6 +43,10 @@
       "title": "Total Logs",
       "type": "stat",
       "id": 2,
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "gridPos": {
         "h": 4,
         "w": 5,
@@ -60,6 +68,10 @@
       "title": "Info Count",
       "type": "stat",
       "id": 3,
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "gridPos": {
         "h": 4,
         "w": 5,
@@ -89,6 +101,10 @@
       "title": "Warning Count",
       "type": "stat",
       "id": 4,
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "gridPos": {
         "h": 4,
         "w": 5,
@@ -118,6 +134,10 @@
       "title": "Error Count",
       "type": "stat",
       "id": 5,
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "gridPos": {
         "h": 4,
         "w": 5,
@@ -147,6 +167,10 @@
       "title": "Last 5 Info Logs",
       "type": "logs",
       "id": 6,
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "gridPos": {
         "h": 6,
         "w": 24,
@@ -173,6 +197,10 @@
       "title": "Last 5 Warnings",
       "type": "logs",
       "id": 7,
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "gridPos": {
         "h": 6,
         "w": 24,
@@ -199,6 +227,10 @@
       "title": "Last 5 Errors",
       "type": "logs",
       "id": 8,
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "gridPos": {
         "h": 6,
         "w": 24,
@@ -225,6 +257,10 @@
       "title": "Activity Timeline (Click a bar to filter dashboard)",
       "type": "timeseries",
       "id": 9,
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "gridPos": {
         "h": 8,
         "w": 24,
@@ -262,6 +298,10 @@
       "title": "RAW LIVE STREAM (FILTERED)",
       "type": "logs",
       "id": 10,
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
       "gridPos": {
         "h": 12,
         "w": 24,
