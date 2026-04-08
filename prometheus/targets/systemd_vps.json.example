@@ -1,26 +1,13 @@
 [
   {
-    "targets": ["10.10.10.11:9443"],
+    "targets": [
+      "10.10.10.11:9443",
+      "10.10.10.12:9443",
+      "10.10.10.13:9443"
+    ],
     "labels": {
       "env": "prod",
-      "region": "eu",
-      "hostname": "vps-web-01"
-    }
-  },
-  {
-    "targets": ["10.10.10.12:9443"],
-    "labels": {
-      "env": "prod",
-      "region": "eu",
-      "hostname": "vps-web-02"
-    }
-  },
-  {
-    "targets": ["10.10.10.13:9443"],
-    "labels": {
-      "env": "prod",
-      "region": "eu",
-      "hostname": "vps-web-03"
+      "region": "eu"
     }
   }
 ]
