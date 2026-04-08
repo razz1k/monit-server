@@ -90,14 +90,14 @@ def fix_log_dashboard_avg_throughput_panel(d):
                     'sum(rate({job="varlogs", filename=~"$filename"}[5m])) or vector(0)'
                 )
                 tgt["editorMode"] = "code"
-                tgt["queryType"] = "range"
+                tgt["queryType"] = "instant"
         panel["options"] = {
             "colorMode": "value",
             "graphMode": "none",
             "justifyMode": "auto",
             "orientation": "auto",
             "reduceOptions": {
-                "calcs": ["mean"],
+                "calcs": ["lastNotNull"],
                 "fields": "",
                 "values": False,
             },
