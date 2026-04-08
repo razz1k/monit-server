@@ -74,6 +74,9 @@ def fix_templating_loki(d):
                 "text": "Loki",
                 "value": LOKI_UID,
             }
+        # Dashboard 24978: "All" for filename must expand to a regex that matches every path.
+        if x.get("name") == "filename" and x.get("type") == "query" and x.get("includeAll"):
+            x["allValue"] = ".+"
 
 
 def fetch_and_prepare(dash_id: int, prom_only: bool) -> dict:

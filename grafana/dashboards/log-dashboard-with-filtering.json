@@ -317,6 +317,7 @@
         "query": "label_values({job=\"varlogs\"}, filename)",
         "multi": true,
         "includeAll": true,
+        "allValue": ".+",
         "label": "Log File",
         "refresh": 1
       }
