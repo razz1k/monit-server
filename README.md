@@ -70,6 +70,7 @@ Provisioned on startup (folder **Monitoring**):
 | File | Grafana.com ID | Use |
 |------|----------------|-----|
 | `node-exporter-full.json` | [1860](https://grafana.com/grafana/dashboards/1860) | Node Exporter host metrics |
+| `systemd-exporter.json` | [22872](https://grafana.com/grafana/dashboards/22872-systemd-exporter/) | systemd_exporter metrics |
 | `blackbox-exporter.json` | [7587](https://grafana.com/grafana/dashboards/7587) | Blackbox probe metrics |
 | `prometheus-overview.json` | [3662](https://grafana.com/grafana/dashboards/3662) | Prometheus server health |
 | `loki-logs-overview.json` | [15141](https://grafana.com/grafana/dashboards/15141) | Loki log panels |

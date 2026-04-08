@@ -11,6 +11,7 @@ LOKI_UID = "loki"
 
 DASHBOARDS = [
     (1860, "node-exporter-full.json", True),
+    (22872, "systemd-exporter.json", True),
     (7587, "blackbox-exporter.json", True),
     (3662, "prometheus-overview.json", True),
     (15141, "loki-logs-overview.json", False),
@@ -51,6 +52,15 @@ def fix_templating_prometheus(d):
                 "text": "Prometheus",
                 "value": PROM_UID,
             }
+        if x.get("type") == "datasource" and x.get("query") == "prometheus":
+            x["current"] = {
+                "selected": True,
+                "text": "Prometheus",
+                "value": PROM_UID,
+            }
+        ds = x.get("datasource")
+        if isinstance(ds, dict) and isinstance(ds.get("uid"), str) and ds["uid"].startswith("${"):
+            ds["uid"] = PROM_UID
 
 
 def fetch_and_prepare(dash_id: int, prom_only: bool) -> dict:
@@ -59,6 +69,7 @@ def fetch_and_prepare(dash_id: int, prom_only: bool) -> dict:
         payload = json.load(resp)
     d = payload.get("dashboard", payload)
     d.pop("__inputs", None)
+    d.pop("__elements", None)
     d.pop("__requires", None)
     d.pop("version", None)
     d["id"] = None
