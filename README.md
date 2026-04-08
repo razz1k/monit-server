@@ -23,7 +23,9 @@ This directory contains the central monitoring stack.
 - `.env` - secrets (not committed); copy from `.env.example`
 - `blackbox/blackbox.yml` - probe modules
 - `loki/config.yml` - Loki single-node config
-- `grafana/provisioning/datasources/datasources.yml` - datasource provisioning
+- `grafana/provisioning/datasources/datasources.yml` - datasource provisioning (stable `uid`: `prometheus`, `loki`)
+- `grafana/provisioning/dashboards/dashboards.yml` - file-based dashboards
+- `grafana/dashboards/*.json` - bundled community dashboards (see below)
 
 ## Quick start
 
@@ -60,6 +62,19 @@ docker compose up -d
   }
 ]
 ```
+
+## Bundled Grafana dashboards
+
+Provisioned on startup (folder **Monitoring**):
+
+| File | Grafana.com ID | Use |
+|------|----------------|-----|
+| `node-exporter-full.json` | [1860](https://grafana.com/grafana/dashboards/1860) | Node Exporter host metrics |
+| `blackbox-exporter.json` | [7587](https://grafana.com/grafana/dashboards/7587) | Blackbox probe metrics |
+| `prometheus-overview.json` | [3662](https://grafana.com/grafana/dashboards/3662) | Prometheus server health |
+| `loki-logs-overview.json` | [15141](https://grafana.com/grafana/dashboards/15141) | Loki log panels |
+
+JSON was post-processed to point datasources at provisioned UIDs `prometheus` and `loki`. To refresh from grafana.com after changing datasource UIDs, run `python3 scripts/fetch-grafana-dashboards.py` from the `server` directory.
 
 ## Recommended network policy
 
