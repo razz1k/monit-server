@@ -40,8 +40,12 @@ scrape_configs:
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
+      # Prevent credentials from leaking into the `instance` label (and Grafana legends/titles)
+      # when targets include basic auth as https://USER:PASS@host/path.
       - source_labels: [__param_target]
         target_label: instance
+        regex: '(https?://)?([^@]+@)?(.*)'
+        replacement: '${1}${3}'
       - target_label: __address__
         replacement: blackbox-exporter:9115
 
