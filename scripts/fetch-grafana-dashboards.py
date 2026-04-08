@@ -80,7 +80,7 @@ def fix_templating_loki(d):
 
 
 def fix_log_dashboard_avg_throughput_panel(d):
-    """rate([$__range]) on range queries yields zeros until the window fills; use [5m] + Stat mean."""
+    """Grafana 11+: Stat fieldConfig color mode 'background' is invalid; use thresholds. Loki rate[5m] instant."""
     for panel in d.get("panels", []):
         if panel.get("title") != "Avg Throughput":
             continue
@@ -91,6 +91,19 @@ def fix_log_dashboard_avg_throughput_panel(d):
                 )
                 tgt["editorMode"] = "code"
                 tgt["queryType"] = "instant"
+        panel["fieldConfig"] = {
+            "defaults": {
+                "unit": "pps",
+                "color": {
+                    "mode": "thresholds",
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [{"color": "green", "value": None}],
+                    },
+                },
+            },
+            "overrides": [],
+        }
         panel["options"] = {
             "colorMode": "value",
             "graphMode": "none",

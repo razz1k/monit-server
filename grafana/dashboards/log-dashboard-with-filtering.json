@@ -24,9 +24,19 @@
         "defaults": {
           "unit": "pps",
           "color": {
-            "mode": "background"
+            "mode": "thresholds",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            }
           }
-        }
+        },
+        "overrides": []
       },
       "options": {
         "colorMode": "value",
