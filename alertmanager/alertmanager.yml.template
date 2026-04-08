@@ -11,8 +11,8 @@ route:
 receivers:
   - name: telegram
     telegram_configs:
-      - bot_token: "123456789:CHANGE_ME"
-        chat_id: 123456789
+      - bot_token: "__TELEGRAM_BOT_TOKEN__"
+        chat_id: __TELEGRAM_CHAT_ID__
         parse_mode: HTML
         message: |
           <b>{{ .Status | toUpper }}</b>

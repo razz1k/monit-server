@@ -19,16 +19,18 @@ This directory contains the central monitoring stack.
 - `prometheus/targets/systemd_vps.json` - file_sd targets for `systemd_exporter` on VPS hosts
 - `prometheus/alerts/node.yml` - base host alert rules
 - `prometheus/alerts/systemd.yml` - systemd unit alert rules
-- `alertmanager/alertmanager.yml` - receivers and routes
+- `alertmanager/alertmanager.yml.template` - Alertmanager config template (`TELEGRAM_*` from `.env`)
+- `.env` - secrets (not committed); copy from `.env.example`
 - `blackbox/blackbox.yml` - probe modules
 - `loki/config.yml` - Loki single-node config
 - `grafana/provisioning/datasources/datasources.yml` - datasource provisioning
 
 ## Quick start
 
-1. Update secrets/placeholders:
-   - `GF_SECURITY_ADMIN_PASSWORD` in `docker-compose.yml`
-   - Telegram token/chat in `alertmanager/alertmanager.yml` (if used)
+1. Create `.env` from the example and set secrets (Compose reads `.env` from this directory automatically):
+   - `cp .env.example .env`
+   - `GF_SECURITY_ADMIN_USER`, `GF_SECURITY_ADMIN_PASSWORD` for Grafana
+   - `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` for Alertmanager (rendered from `alertmanager.yml.template` at container start)
    - copy `prometheus/targets/node_vps.json.example` to `prometheus/targets/node_vps.json` and set scrape targets to `host:9443` (nginx on each VPS)
    - copy `prometheus/targets/systemd_vps.json.example` to `prometheus/targets/systemd_vps.json` with the **same** `host:9443` list (paths differ via `metrics_path` in `prometheus.yml`)
 2. Start stack:
