@@ -28,13 +28,25 @@
           }
         }
       },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["mean"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
       "targets": [
         {
           "datasource": {
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(rate({job=\"varlogs\", filename=~\"$filename\"}[$__range])) or vector(0)",
+          "expr": "sum(rate({job=\"varlogs\", filename=~\"$filename\"}[5m])) or vector(0)",
           "refId": "A"
         }
       ]
@@ -326,7 +338,7 @@
       ]
     }
   ],
-  "refresh": "5s",
+  "refresh": "30s",
   "schemaVersion": 39,
   "tags": [
     "monitoring",

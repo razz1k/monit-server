@@ -79,6 +79,31 @@ def fix_templating_loki(d):
             x["allValue"] = ".+"
 
 
+def fix_log_dashboard_avg_throughput_panel(d):
+    """rate([$__range]) on range queries yields zeros until the window fills; use [5m] + Stat mean."""
+    for panel in d.get("panels", []):
+        if panel.get("title") != "Avg Throughput":
+            continue
+        for tgt in panel.get("targets") or []:
+            if tgt.get("refId") == "A":
+                tgt["expr"] = (
+                    'sum(rate({job="varlogs", filename=~"$filename"}[5m])) or vector(0)'
+                )
+        panel["options"] = {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+                "calcs": ["mean"],
+                "fields": "",
+                "values": False,
+            },
+            "textMode": "auto",
+        }
+        break
+
+
 def ensure_loki_panels_have_datasource(d):
     """Grafana uses the org default datasource when panel.datasource is missing; set Loki on each panel."""
     for panel in d.get("panels", []):
@@ -108,6 +133,9 @@ def fetch_and_prepare(dash_id: int, prom_only: bool) -> dict:
     else:
         fix_templating_loki(d)
         ensure_loki_panels_have_datasource(d)
+        if dash_id == 24978:
+            fix_log_dashboard_avg_throughput_panel(d)
+            d["refresh"] = "30s"
     return d
 
 
